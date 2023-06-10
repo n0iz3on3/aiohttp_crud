@@ -5,7 +5,7 @@
 ```python
 PG_USER:postgres
 PG_PASSWORD:12345
-PG_DB:aiohttp_test
+PG_DB:aiohttp_crud
 ```
 2. Подготовить окружение и установить зависимости: 
 ```python
