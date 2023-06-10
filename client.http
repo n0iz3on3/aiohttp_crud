@@ -1,0 +1,79 @@
+
+### register
+# @name postRegister
+POST http://127.0.0.1:8080/users
+Content-Type: application/json
+
+{
+    "email": "new_mail@cupof.tea",
+    "password": "strongpass0943"
+}
+
+### login
+# @name postLogin
+POST http://127.0.0.1:8080/login
+Content-Type: application/json
+
+{
+    "email": "new_mail@cupof.tea",
+    "password": "strongpass0943"
+}
+
+###
+@token = {{Token}}
+###
+###
+
+GET http://127.0.0.1:8080/users/5
+Content-Type: application/json
+
+###
+
+GET http://127.0.0.1:8080/users/4
+Content-Type: application/json
+
+###
+DELETE http://127.0.0.1:8080/users/5
+Content-Type: application/json
+token: {{token}}
+
+
+###
+
+POST http://127.0.0.1:8080/ads
+Content-Type: application/json
+Token: {{token}}
+
+{
+    "title": "Nice title 3",
+    "description": "Big one discription 3"
+}
+
+###
+
+###
+
+PATCH http://127.0.0.1:8080/ads/3
+Content-Type: application/json
+Token: {{token}}
+
+{
+    "title": "4top",
+    "description": "New small disc"
+}
+
+###
+
+
+GET http://127.0.0.1:8080/ads/1
+Content-Type: application/json
+
+
+
+###
+
+DELETE http://127.0.0.1:8080/ads/1
+Content-Type: application/json
+Token: {{token}}
+
+###

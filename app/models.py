@@ -1,11 +1,11 @@
 import uuid
 
 from typing import Type
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, func
 from sqlalchemy_utils import EmailType, UUIDType
+from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, func
 
 import config
 

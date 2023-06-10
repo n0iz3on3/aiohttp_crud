@@ -1,10 +1,11 @@
 import re
+import json
 
-from pydantic import BaseModel, EmailStr, ValidationError, validator
-from typing import Any, Dict, Optional, Type
-from aiohttp.web import HTTPBadRequest
+from typing import Optional, Callable
+from aiohttp.web import Response, json_response
+from pydantic.error_wrappers import ValidationError
+from pydantic import BaseModel, EmailStr, Extra, validator
 
-from errors import raise_http_error
 from config import PASSWORD_LENGTH
 
 
@@ -15,7 +16,7 @@ PASSWORD_REGEX = re.compile(
 )
 
 
-class Register(BaseModel):
+class Register(BaseModel, extra=Extra.forbid):
 
     email: EmailStr
     password: str
@@ -28,19 +29,19 @@ class Register(BaseModel):
         return value
 
 
-class Login(BaseModel):
+class Login(BaseModel, extra=Extra.forbid):
 
     email: EmailStr
     password: str
 
 
-class PatchUser(BaseModel):
+class PatchUser(BaseModel, extra=Extra.forbid):
 
     email: Optional[EmailStr]
     password: Optional[str]
 
 
-class CreateAds(BaseModel):
+class CreateAds(BaseModel, extra=Extra.forbid):
 
     title: str
     description: str
@@ -60,18 +61,23 @@ class CreateAds(BaseModel):
         return value
 
 
-class PatchAds(CreateAds, BaseModel):
+class PatchAds(CreateAds, BaseModel, extra=Extra.forbid):
 
     title: Optional[str]
     description: Optional[str]
 
 
-SCHEMA_TYPE = Type[Register] | Type[Login] | Type[PatchUser] | Type[PatchAds] | Type[CreateAds]
-
-
-def validate(schema: SCHEMA_TYPE, data: Dict[str, Any], exclude_none: bool = True) -> dict:
-    try:
-        validated = schema(**data).dict(exclude_none=exclude_none)
-    except ValidationError as er:
-        raise raise_http_error(HTTPBadRequest, er.errors())
-    return validated
+def validate(base_model) -> Callable:
+    """Validate decorator."""
+    def decorator(handler) -> Callable:
+        async def wrapper(view) -> Response:
+            json_data = await view.request.json()
+            try:
+                base_model(**json_data)
+            except ValidationError as e:
+                return json_response(
+                    {'error': json.loads(e.json())}, status=400
+                )
+            return await handler(view)
+        return wrapper
+    return decorator
